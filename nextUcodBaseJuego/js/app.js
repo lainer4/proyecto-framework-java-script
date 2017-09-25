@@ -19,10 +19,10 @@ var lenres = ["", "", "", "", "", "", ""];
 var maximo = 0;
 var matriz = 0;
 
-var intervalo = 0; //variable de tiempo para funcion de desplazamiento
-var eliminar = 0; //variable de tiempo para eliminar dulces
-var newdulces = 0; //variable de tiempo para nuevos dulces
-var tiempo = 0; //variable de tiempo para temporizador
+var intervalo = 0;
+var eliminar = 0; 
+var newdulces = 0; 
+var tiempo = 0; 
 
 var i = 0;
 var contador = 0; //contador total
@@ -61,3 +61,72 @@ $(".btn-reinicio").click(function() {
     timer();
   }, 1000);
 });
+
+
+function timer() {
+  if (seg != 0) {
+    seg = seg - 1;
+  }
+  if (seg == 0) {
+    if (min == 0) {
+      clearInterval(eliminar);
+      clearInterval(newdulces);
+      clearInterval(intervalo);
+      clearInterval(tiempo);
+      $(".panel-tablero").hide("drop", "slow", callback);
+      $(".time").hide();
+    }
+    seg = 59;
+    min = min - 1;
+  }
+  $("#timer").html("0" + min + ":" + seg);
+}
+
+
+
+
+function callback() {
+  $(".panel-score").animate({ width: "100%" }, 4000);
+}
+
+
+
+
+function borrartotal() {
+  for (var j = 1; j < 8; j++) {
+    $(".col-" + j)
+      .children("img")
+      .detach();
+  }
+}
+   
+
+
+function desplazamiento() {
+  i = i + 1;
+  var numero = 0;
+  var imagen = 0;
+
+  $(".elemento").draggable({ disabled: true });
+  if (i < 8) {
+    for (var j = 1; j < 8; j++) {
+      if (
+        $(".col-" + j)
+          .children("img:nth-child(" + i + ")")
+          .html() == null
+      ) {
+        numero = Math.floor(Math.random() * 4) + 1;
+        imagen = "image/" + numero + ".png";
+        $(".col-" + j)
+          .prepend("<img src=" + imagen + " class='elemento'/>")
+          .css("justify-content", "flex-start");
+      }
+    }
+  }
+  if (i == 8) {
+    clearInterval(intervalo);
+    eliminar = setInterval(function() {
+      eliminarhorver();
+    }, 150);
+  }
+}
