@@ -56,7 +56,7 @@ $(".btn-reinicio").click(function() {
   borrartotal();
   intervalo = setInterval(function() {
     desplazamiento();
-  }, 600);
+  }, 100);
   tiempo = setInterval(function() {
     timer();
   }, 1000);
@@ -86,7 +86,7 @@ function timer() {
 
 
 function callback() {
-  $(".panel-score").animate({ width: "100%" }, 4000);
+  $(".panel-score").animate({ width: "100%" }, 1000);
 }
 
 
@@ -147,7 +147,7 @@ function eliminarhorver() {
     bnewd = 0;
     newdulces = setInterval(function() {
       nuevosdulces(); 
-    }, 600);
+    }, 100);
   }
   if (rbh == 1 || rbv == 1) {
     $(".elemento").draggable({ disabled: true });
@@ -201,73 +201,114 @@ function eliminarhorver() {
 }
 
 
-jQuery.fn.swap = function(b)
-{
-    b = jQuery(b)[0];
-    var a = this[0];
-    var t = a.parentNode.insertBefore(document.createTextNode(''), a);
-    b.parentNode.insertBefore(a, b);
-    t.parentNode.insertBefore(b, t);
-    t.parentNode.removeChild(t);
-    return this;
+jQuery.fn.swap = function(b) {
+  b = jQuery(b)[0];
+  var a = this[0];
+  var t = a.parentNode.insertBefore(document.createTextNode(""), a);
+  b.parentNode.insertBefore(a, b);
+  t.parentNode.insertBefore(b, t);
+  t.parentNode.removeChild(t);
+  return this;
 };
-//------------------------------------------------------------------------------
-//---------Funcion de nuevos dulces---------------------------------------------
-function nuevosdulces()
-{
+
+
+function nuevosdulces() {
   $(".elemento").draggable({ disabled: true });
-  //alert("pase")
-  $("div[class^='col']").css("justify-content","flex-start")
+ 
+
+
+  $("div[class^='col']").css("justify-content", "flex-start");
+  for (var j = 1; j < 8; j++) {
+    lencol[j - 1] = $(".col-" + j).children().length;
+  }
+  if (bnewd == 0) {
+    for (var j = 0; j < 7; j++) {
+      lenres[j] = 7 - lencol[j];
+    }
+    maximo = Math.max.apply(null, lenres);
+    contador = maximo;
+  }
+  if (maximo != 0) {
+    if (bnewd == 1) {
+      for (var j = 1; j < 8; j++) {
+        if (contador > maximo - lenres[j - 1]) {
+          $(".col-" + j)
+            .children("img:nth-child(" + lenres[j - 1] + ")")
+            .remove("img");
+        }
+      }
+    }
+    if (bnewd == 0) {
+      bnewd = 1;
+      for (var k = 1; k < 8; k++) {
+        for (var j = 0; j < lenres[k - 1] - 1; j++) {
+          $(".col-" + k).prepend(
+            "<img src='' class='elemento' style='visibility:hidden'/>"
+          );
+        }
+      }
+    }
+    for (var j = 1; j < 8; j++) {
+      if (contador > maximo - lenres[j - 1]) {
+        numero = Math.floor(Math.random() * 4) + 1;
+        imagen = "image/" + numero + ".png";
+        $(".col-" + j).prepend("<img src=" + imagen + " class='elemento'/>");
+      }
+    }
+  }
+  if (contador == 1) {
+    clearInterval(newdulces);
+    eliminar = setInterval(function() {
+      eliminarhorver();
+    }, 150);
+  }
+  contador = contador - 1;
+}
+
+
+
+function horizontal()
+{
+  var bh=0;
   for(var j=1;j<8;j++)
   {
-      lencol[j-1]=$(".col-"+j).children().length;
-  }
-  if(bnewd==0)
-  {
-    for(var j=0;j<7;j++)
+    for(var k=1;k<6;k++)
     {
-      lenres[j]=(7-lencol[j]);
-    }
-    maximo=Math.max.apply(null,lenres);
-    contador=maximo;
-  }
-  if(maximo!=0)
-  {
-    if(bnewd==1)
-    {
-      for(var j=1;j<8;j++)
+      var res1=$(".col-"+k).children("img:nth-last-child("+j+")").attr("src")
+      var res2=$(".col-"+(k+1)).children("img:nth-last-child("+j+")").attr("src")
+      var res3=$(".col-"+(k+2)).children("img:nth-last-child("+j+")").attr("src")
+      if((res1==res2) && (res2==res3) && (res1!=null) && (res2!=null) && (res3!=null))
       {
-        if(contador>(maximo-lenres[j-1]))
-        {
-          $(".col-"+j).children("img:nth-child("+(lenres[j-1])+")").remove("img")
-        }
-      }
-    }
-    if(bnewd==0)
-    {
-      bnewd=1;
-      for(var k=1;k<8;k++)
-      {
-        for(var j=0;j<(lenres[k-1]-1);j++)
-        {
-            $(".col-"+k).prepend("<img src='' class='elemento' style='visibility:hidden'/>")
-        }
-      }
-    }
-    for(var j=1;j<8;j++)
-    {
-      if(contador>(maximo-lenres[j-1]))
-      {
-        numero=Math.floor(Math.random() * 4) + 1 ;
-        imagen="image/"+numero+".png";
-        $(".col-"+j).prepend("<img src="+imagen+" class='elemento'/>")
+          $(".col-"+k).children("img:nth-last-child("+(j)+")").attr("class","elemento activo")
+          $(".col-"+(k+1)).children("img:nth-last-child("+(j)+")").attr("class","elemento activo")
+          $(".col-"+(k+2)).children("img:nth-last-child("+(j)+")").attr("class","elemento activo")
+          bh=1;
       }
     }
   }
-  if(contador==1)
+  return bh;
+}
+
+
+
+function vertical()
+{
+  var bv=0;
+  for(var l=1;l<6;l++)
   {
-      clearInterval(newdulces);
-      eliminar=setInterval(function(){eliminarhorver()},150)
+    for(var k=1;k<8;k++)
+    {
+      var res1=$(".col-"+k).children("img:nth-child("+l+")").attr("src")
+      var res2=$(".col-"+k).children("img:nth-child("+(l+1)+")").attr("src")
+      var res3=$(".col-"+k).children("img:nth-child("+(l+2)+")").attr("src")
+      if((res1==res2) && (res2==res3) && (res1!=null) && (res2!=null) && (res3!=null))
+      {
+          $(".col-"+k).children("img:nth-child("+(l)+")").attr("class","elemento activo")
+          $(".col-"+k).children("img:nth-child("+(l+1)+")").attr("class","elemento activo")
+          $(".col-"+k).children("img:nth-child("+(l+2)+")").attr("class","elemento activo")
+          bv=1;
+      }
+    }
   }
-  contador=contador-1;
+  return bv;
 }
