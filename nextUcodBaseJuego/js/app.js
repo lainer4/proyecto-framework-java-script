@@ -199,3 +199,75 @@ function eliminarhorver() {
     }
   });
 }
+
+
+jQuery.fn.swap = function(b)
+{
+    b = jQuery(b)[0];
+    var a = this[0];
+    var t = a.parentNode.insertBefore(document.createTextNode(''), a);
+    b.parentNode.insertBefore(a, b);
+    t.parentNode.insertBefore(b, t);
+    t.parentNode.removeChild(t);
+    return this;
+};
+//------------------------------------------------------------------------------
+//---------Funcion de nuevos dulces---------------------------------------------
+function nuevosdulces()
+{
+  $(".elemento").draggable({ disabled: true });
+  //alert("pase")
+  $("div[class^='col']").css("justify-content","flex-start")
+  for(var j=1;j<8;j++)
+  {
+      lencol[j-1]=$(".col-"+j).children().length;
+  }
+  if(bnewd==0)
+  {
+    for(var j=0;j<7;j++)
+    {
+      lenres[j]=(7-lencol[j]);
+    }
+    maximo=Math.max.apply(null,lenres);
+    contador=maximo;
+  }
+  if(maximo!=0)
+  {
+    if(bnewd==1)
+    {
+      for(var j=1;j<8;j++)
+      {
+        if(contador>(maximo-lenres[j-1]))
+        {
+          $(".col-"+j).children("img:nth-child("+(lenres[j-1])+")").remove("img")
+        }
+      }
+    }
+    if(bnewd==0)
+    {
+      bnewd=1;
+      for(var k=1;k<8;k++)
+      {
+        for(var j=0;j<(lenres[k-1]-1);j++)
+        {
+            $(".col-"+k).prepend("<img src='' class='elemento' style='visibility:hidden'/>")
+        }
+      }
+    }
+    for(var j=1;j<8;j++)
+    {
+      if(contador>(maximo-lenres[j-1]))
+      {
+        numero=Math.floor(Math.random() * 4) + 1 ;
+        imagen="image/"+numero+".png";
+        $(".col-"+j).prepend("<img src="+imagen+" class='elemento'/>")
+      }
+    }
+  }
+  if(contador==1)
+  {
+      clearInterval(newdulces);
+      eliminar=setInterval(function(){eliminarhorver()},150)
+  }
+  contador=contador-1;
+}
